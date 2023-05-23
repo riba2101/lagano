@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS dummy
+(
+    `id`   VARCHAR(255) NOT NULL PRIMARY KEY,
+    `name` VARCHAR(55)  NOT NULL
+);
