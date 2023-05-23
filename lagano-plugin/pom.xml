@@ -14,7 +14,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>lagano-maven-plugin-test-config</module>
         <module>lagano-jooq-maven-plugin</module>
     </modules>
 

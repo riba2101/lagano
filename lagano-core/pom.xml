@@ -11,8 +11,6 @@
 
     <artifactId>lagano-core</artifactId>
 
-    <name>Lagano core</name>
-
     <dependencies>
         <dependency>
             <groupId>org.flywaydb</groupId>

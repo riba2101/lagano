@@ -11,8 +11,6 @@
     <artifactId>lagano-testcontainers</artifactId>
     <packaging>pom</packaging>
 
-    <name>Lagano Testcontainers</name>
-
     <modules>
         <module>lagano-testcontainers-jdbc</module>
     </modules>

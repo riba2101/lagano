@@ -1,0 +1,29 @@
+on:
+  release:
+    types: [created]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+      - name: Cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Publish
+        run: |
+          mvn -B org.codehaus.mojo:versions-maven-plugin:2.5:set -DnewVersion=${GITHUB_REF##*/}
+          mvn -B -Possrh deploy
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USER }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_PASS }}
+          GPG_SECRET_KEYS: ${{ secrets.GPG_SECRET_KEYS }}
+          GPG_OWNERTRUST: ${{ secrets.GPG_OWNERTRUST }}
