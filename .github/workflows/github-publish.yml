@@ -11,6 +11,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 17
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
       - name: Cache
         uses: actions/cache@v3
         with:
@@ -18,19 +20,9 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      - name: Import GPG key
-        env:
-          GPG_SECRET_KEYS: ${{ secrets.GPG_SECRET_KEYS }}
-          GPG_OWNERTRUST: ${{ secrets.GPG_OWNERTRUST }}
-        run: |
-          echo $GPG_SECRET_KEYS | base64 --decode | gpg --import --no-tty --batch --yes
-          echo $GPG_OWNERTRUST | base64 --decode | gpg --import-ownertrust --no-tty --batch --yes
-          gpg --list-secret-keys --keyid-format LONG
       - name: Publish
         run: |
           mvn -B org.codehaus.mojo:versions-maven-plugin:2.5:set -DnewVersion=${GITHUB_REF##*/}
           mvn -B -Pgithub deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GPG_SECRET_KEYS: ${{ secrets.GPG_SECRET_KEYS }}
-          GPG_OWNERTRUST: ${{ secrets.GPG_OWNERTRUST }}
