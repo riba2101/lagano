@@ -13,5 +13,7 @@
 
     <modules>
         <module>lagano-testcontainers-jdbc</module>
+        <module>lagano-testcontainers-jdbc-testsuite</module>
+        <module>lagano-testcontainers-mariadb</module>
     </modules>
 </project>

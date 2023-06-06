@@ -8,7 +8,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>lagano-testcontainers-jdbc</artifactId>
+    <artifactId>lagano-testcontainers-mariadb</artifactId>
 
     <properties>
         <mariadb-java-client.version>3.0.10</mariadb-java-client.version>
@@ -17,24 +17,26 @@
     <dependencies>
         <dependency>
             <groupId>org.laganini.lagano</groupId>
-            <artifactId>lagano-core</artifactId>
+            <artifactId>lagano-testcontainers-jdbc</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.laganini.lagano</groupId>
-            <artifactId>lagano-snapshot</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mariadb</artifactId>
+            <version>${testcontainers.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>jdbc</artifactId>
-            <version>${testcontainers.version}</version>
+            <groupId>org.laganini.lagano</groupId>
+            <artifactId>lagano-testcontainers-jdbc-testsuite</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <version>${hikari.version}</version>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>${mariadb.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

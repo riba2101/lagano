@@ -4,10 +4,6 @@ import javax.sql.DataSource
 
 interface SqlSnapshotContainer {
 
-    fun delegate(): Any
-
-    fun dataSource(): DataSource
-
     fun start()
 
     fun stop()

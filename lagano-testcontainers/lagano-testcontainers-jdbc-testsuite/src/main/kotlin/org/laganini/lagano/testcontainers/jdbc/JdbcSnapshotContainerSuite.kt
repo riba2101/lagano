@@ -8,19 +8,16 @@ import org.junit.jupiter.api.Test
 import org.junitpioneer.jupiter.SetEnvironmentVariable
 import org.laganini.lagano.snpashot.SnapshotConfiguration
 import org.testcontainers.containers.JdbcDatabaseContainer
-import org.testcontainers.containers.MariaDBContainer
-import org.testcontainers.containers.wait.strategy.Wait
-import org.testcontainers.utility.DockerImageName
 import java.sql.ResultSet
+import java.util.function.Supplier
 import kotlin.io.path.Path
 import kotlin.io.path.copyTo
 import kotlin.io.path.createDirectory
 
 
-internal class JdbcSnapshotContainerIT {
-
-    private val container: MariaDBContainer<*> = MariaDBContainer(DockerImageName.parse(MariaDBContainer.NAME))
-        .waitingFor(Wait.forListeningPort())
+abstract class JdbcSnapshotContainerSuite<CONTAINER>(private val snapshotContainerSupplier: Supplier<CONTAINER>)
+        where CONTAINER : JdbcSnapshotContainer,
+              CONTAINER : JdbcDatabaseContainer<CONTAINER> {
 
     @BeforeEach
     internal fun setUp() {
@@ -47,11 +44,11 @@ internal class JdbcSnapshotContainerIT {
                 @Nested
                 internal inner class Suite {
 
-                    private lateinit var snapshotContainer: JdbcSnapshotContainer
+                    private lateinit var snapshotContainer: CONTAINER
 
                     @BeforeEach
                     internal fun setUp() {
-                        snapshotContainer = JdbcSnapshotContainer(container)
+                        snapshotContainer = snapshotContainerSupplier.get()
                         snapshotContainer.start()
                     }
 
@@ -64,8 +61,8 @@ internal class JdbcSnapshotContainerIT {
                     fun shouldRun() {
                         snapshotContainer.restore()
 
-                        val databases = getDatabases(container)
-                        val tables = getTables(container)
+                        val databases = getDatabases(snapshotContainer)
+                        val tables = getTables(snapshotContainer)
 
                         Assertions.assertThat(databases).contains(TEST_DB)
                         Assertions.assertThat(tables).doesNotContain(DUMMY_TABLE)
@@ -87,11 +84,11 @@ internal class JdbcSnapshotContainerIT {
                 @Nested
                 internal inner class Suite {
 
-                    private lateinit var snapshotContainer: JdbcSnapshotContainer
+                    private lateinit var snapshotContainer: CONTAINER
 
                     @BeforeEach
                     internal fun setUp() {
-                        snapshotContainer = JdbcSnapshotContainer(container)
+                        snapshotContainer = snapshotContainerSupplier.get()
                         snapshotContainer.start()
                     }
 
@@ -104,8 +101,8 @@ internal class JdbcSnapshotContainerIT {
                     fun shouldRun() {
                         snapshotContainer.restore()
 
-                        val databases = getDatabases(container)
-                        val tables = getTables(container)
+                        val databases = getDatabases(snapshotContainer)
+                        val tables = getTables(snapshotContainer)
 
                         Assertions.assertThat(databases).contains(TEST_DB)
                         Assertions.assertThat(tables).contains(DUMMY_TABLE)
@@ -117,7 +114,7 @@ internal class JdbcSnapshotContainerIT {
 
         }
 
-        private fun getDatabases(container: MariaDBContainer<*>): List<String> {
+        private fun getDatabases(container: CONTAINER): List<String> {
             val resultSet = performQuery(container, "SHOW DATABASES")
 
             return resultSet
@@ -128,7 +125,7 @@ internal class JdbcSnapshotContainerIT {
                 }
         }
 
-        private fun getTables(container: MariaDBContainer<*>): List<String> {
+        private fun getTables(container: CONTAINER): List<String> {
             performQuery(container, "USE $TEST_DB")
             val resultSet = performQuery(container, "SHOW FULL TABLES")
 

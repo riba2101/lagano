@@ -9,6 +9,7 @@ import org.jooq.codegen.maven.Plugin
 import org.jooq.meta.jaxb.Jdbc
 import org.laganini.lagano.migration.LaganoContainerProvider
 import org.laganini.lagano.migration.LaganoFlywayConfigProvider
+import org.laganini.lagano.testcontainers.jdbc.JdbcSnapshotContainer
 import org.testcontainers.containers.JdbcDatabaseContainer
 import java.io.File
 import java.lang.reflect.Field
@@ -49,6 +50,10 @@ class LaganoPlugin : Plugin() {
             .newInstance() as LaganoContainerProvider
         val container = containerProvider.provide()
 
+        if (container !is JdbcSnapshotContainer) {
+            throw IllegalArgumentException("Provided container is not a JdbcSnapshotContainer")
+        }
+
         val flywayConfigProvider = Class
             .forName(flywayProvider, true, pluginClassLoader)
             .getDeclaredConstructor()
@@ -71,7 +76,7 @@ class LaganoPlugin : Plugin() {
             superProjectField.set(this, project)
 
             //set jdbc
-            val jdbcDatabaseContainer = container.delegate() as JdbcDatabaseContainer<*>
+            val jdbcDatabaseContainer = container as JdbcDatabaseContainer<*>
             val superJdbcField: Field = javaClass.superclass.getDeclaredField("jdbc")
             superJdbcField.isAccessible = true
             val jdbc: Jdbc = superJdbcField.get(this) as Jdbc
