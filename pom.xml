@@ -28,7 +28,7 @@
 
         <mariadb.version>3.0.10</mariadb.version>
         <hikari.version>5.0.1</hikari.version>
-        <testcontainers.version>1.18.0</testcontainers.version>
+        <testcontainers.version>1.18.3</testcontainers.version>
 
         <junit-jupiter.version>5.9.2</junit-jupiter.version>
 

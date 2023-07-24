@@ -81,7 +81,7 @@ internal class KeepLatestNCleanStrategyTest {
 
             Assertions
                 .assertThat(Files.list(Path(PATH)).map { path -> path.toAbsolutePath() })
-                .containsExactly(secondPath, thirdPath)
+                .containsOnly(secondPath, thirdPath)
         }
 
     }

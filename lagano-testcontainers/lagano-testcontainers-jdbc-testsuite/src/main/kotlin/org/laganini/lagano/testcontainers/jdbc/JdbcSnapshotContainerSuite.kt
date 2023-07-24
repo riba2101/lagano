@@ -9,6 +9,7 @@ import org.junitpioneer.jupiter.SetEnvironmentVariable
 import org.laganini.lagano.snpashot.SnapshotConfiguration
 import org.testcontainers.containers.JdbcDatabaseContainer
 import java.sql.ResultSet
+import java.util.*
 import java.util.function.Supplier
 import kotlin.io.path.Path
 import kotlin.io.path.copyTo
@@ -33,7 +34,6 @@ abstract class JdbcSnapshotContainerSuite<CONTAINER>(private val snapshotContain
     @SetEnvironmentVariable(key = SnapshotConfiguration.PROPERTY_FEATURE_DB_SNAPSHOT, value = "true")
     @SetEnvironmentVariable(key = SnapshotConfiguration.PROPERTY_FEATURE_DB_SNAPSHOT_PATH, value = PATH)
     internal inner class WithSupport {
-
 
         @Nested
         internal inner class DefaultStorage {
@@ -114,38 +114,57 @@ abstract class JdbcSnapshotContainerSuite<CONTAINER>(private val snapshotContain
 
         }
 
-        private fun getDatabases(container: CONTAINER): List<String> {
-            val resultSet = performQuery(container, "SHOW DATABASES")
+    }
 
-            return resultSet
-                .use { rs ->
-                    generateSequence {
-                        if (rs?.next() == true) rs.getString(1) else null
-                    }.toList()
-                }
+    private fun getDatabases(container: CONTAINER): List<String> {
+        val resultSet = performQuery(container, getDatabasesQuery())
+
+        return resultSet
+            .use { rs ->
+                generateSequence {
+                    if (rs?.next() == true) rs.getString(1) else null
+                }.toList()
+            }
+    }
+
+    protected open fun getDatabasesQuery(): String {
+        return "SHOW DATABASES"
+    }
+
+    private fun getTables(container: CONTAINER): List<String> {
+        val resultSet = performQuery(container, getTablesQuery(), useCatalog())
+
+        return resultSet
+            .use { rs ->
+                generateSequence {
+                    if (rs?.next() == true) rs.getString(1) else null
+                }.toList()
+            }
+    }
+
+    protected open fun getTablesQuery(): String {
+        return "SHOW FULL TABLES"
+    }
+
+    protected open fun useCatalog(): String? {
+        return null
+    }
+
+    private fun performQuery(container: JdbcDatabaseContainer<*>, sql: String, database: String? = null): ResultSet? {
+        val connector = container.createConnection("", buildProps(database))
+        val statement = connector.createStatement()
+
+        return statement.executeQuery(sql)
+    }
+
+    protected open fun buildProps(database: String?): Properties {
+        if (database == null) {
+            return Properties()
         }
 
-        private fun getTables(container: CONTAINER): List<String> {
-            performQuery(container, "USE $TEST_DB")
-            val resultSet = performQuery(container, "SHOW FULL TABLES")
-
-            return resultSet
-                .use { rs ->
-                    generateSequence {
-                        if (rs?.next() == true) rs.getString(1) else null
-                    }.toList()
-                }
-        }
-
-        private fun performQuery(container: JdbcDatabaseContainer<*>, sql: String): ResultSet? {
-            return container
-                .createConnection("")
-                .use {
-                    it.createStatement()
-                        .use { it.executeQuery(sql) }
-                }
-        }
-
+        val props = Properties()
+        props.put("database", database)
+        return props
     }
 
     companion object {

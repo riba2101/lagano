@@ -12,13 +12,14 @@ import org.testcontainers.utility.DockerImageName
 import javax.sql.DataSource
 
 class PostgreSqlJdbcContainer(
-    dockerImageName: DockerImageName = DockerImageName.parse(NAME).withTag(DEFAULT_IMAGE_VERSION),
+    dockerImageName: DockerImageName = DockerImageName.parse(IMAGE).withTag(DEFAULT_TAG),
     private val snapshotConfiguration: SnapshotConfiguration = SnapshotConfiguration()
 ) : JdbcSnapshotContainer, PostgreSQLContainer<PostgreSqlJdbcContainer>(dockerImageName) {
 
     private val snapshotSupport: SnapshotSupport = SnapshotSupport(snapshotConfiguration)
 
     init {
+        snapshotSupport.setup()
         val fsPath = snapshotSupport.buildFsPath()
         if (fsPath != null) {
             withFileSystemBind(
@@ -59,7 +60,7 @@ class PostgreSqlJdbcContainer(
         execInContainer(
             "sh",
             "-c",
-            "pg_dump --user " + username + " -p" + password + " " + databaseName + " > " + snapshotConfiguration.containerFilename
+            "pg_dump --user " + username + " " + databaseName + " > " + snapshotConfiguration.containerFilename
         )
     }
 
@@ -71,12 +72,8 @@ class PostgreSqlJdbcContainer(
         execInContainer(
             "sh",
             "-c",
-            "psql --user " + username + " -p" + password + " " + databaseName + " < " + snapshotConfiguration.containerFilename
+            "psql --user " + username + " " + databaseName + " < " + snapshotConfiguration.containerFilename
         )
-    }
-
-    companion object {
-        const val DEFAULT_IMAGE_VERSION = "10.9.6"
     }
 
 }

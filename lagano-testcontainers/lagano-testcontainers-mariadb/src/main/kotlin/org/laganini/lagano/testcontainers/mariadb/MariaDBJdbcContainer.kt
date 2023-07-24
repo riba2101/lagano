@@ -19,6 +19,7 @@ class MariaDBJdbcContainer(
     private val snapshotSupport: SnapshotSupport = SnapshotSupport(snapshotConfiguration)
 
     init {
+        snapshotSupport.setup()
         val fsPath = snapshotSupport.buildFsPath()
         if (fsPath != null) {
             withFileSystemBind(
