@@ -1,14 +1,14 @@
 package org.laganini.lagano.codegen.maven
 
-import org.apache.maven.plugin.testing.AbstractMojoTestCase
-import org.apache.maven.plugin.testing.MojoRule
-import org.apache.maven.project.MavenProject
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import java.io.File
+//import org.apache.maven.plugin.testing.AbstractMojoTestCase
+//import org.apache.maven.plugin.testing.MojoRule
+//import org.apache.maven.project.MavenProject
+//import org.junit.jupiter.api.BeforeEach
+//import org.junit.jupiter.api.Test
+//import java.io.File
 
 
-class LaganoPluginIT : AbstractMojoTestCase() {
+//class LaganoPluginIT : AbstractMojoTestCase() {
 
 //    private val mojoRule: MojoRule = MojoRule(this)
 //
@@ -26,4 +26,4 @@ class LaganoPluginIT : AbstractMojoTestCase() {
 //        mojo.execute()
 //    }
 
-}
+//}
