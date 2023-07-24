@@ -15,5 +15,6 @@
         <module>lagano-testcontainers-jdbc</module>
         <module>lagano-testcontainers-jdbc-testsuite</module>
         <module>lagano-testcontainers-mariadb</module>
+        <module>lagano-testcontainers-postgresql</module>
     </modules>
 </project>
