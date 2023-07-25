@@ -7,6 +7,22 @@
     <packaging>pom</packaging>
 
     <name>Lagano</name>
+    <description>Database snapshot manager to speed up testing using Testcontainers</description>
+    <url>https://github.com/riba2101/lagano</url>
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <scm>
+        <url>https://github.com/riba2101/lagano</url>
+    </scm>
+    <developers>
+        <developer>
+            <name>Ognjen Ribicic</name>
+        </developer>
+    </developers>
 
     <modules>
         <module>lagano-core</module>
@@ -37,6 +53,7 @@
         <assertj.version>3.23.1</assertj.version>
 
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+        <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
 
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.4.1</maven-javadoc-plugin.version>
@@ -150,6 +167,11 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
